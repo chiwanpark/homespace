@@ -1,4 +1,7 @@
-# Created by https://www.gitignore.io/api/osx,linux
+# Created by https://www.gitignore.io/api/osx,linux,ansible
+
+### Ansible ###
+*.retry
 
 ### Linux ###
 *~
