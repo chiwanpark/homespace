@@ -1,8 +1,12 @@
-#!/bin/sh -exu
+#!/bin/sh -ex
 dev=$1
+[ -z $dev ] && read dev
 wifi_ssid=$2
+[ -z $wifi_ssid ] && read wifi_ssid
 wifi_password=$3
+[ -z $wifi_password ] && read wifi_password
 hostname=$4
+[ -z $hostname ] && read hostname
 
 # decide partition suffix
 echo $dev | grep "mmcblk"
