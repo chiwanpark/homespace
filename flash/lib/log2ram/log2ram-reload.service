@@ -1,0 +1,6 @@
+[Unit]
+Description=reload log2ram
+
+[Service]
+Type=oneshot
+ExecStart=/bin/systemctl reload log2ram
