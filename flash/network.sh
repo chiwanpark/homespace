@@ -26,6 +26,11 @@ cd $tmp_dir
 # hostname configuration
 echo $hostname > root/etc/hostname
 
+# avoid wifi sleep mode (iptime n100mini)
+cat <<EOF >> root/etc/modprobe.d/8192cu.conf
+options 8192cu rtw_power_mgnt=0 rtw_enusbss=0
+EOF
+
 # WiFi configuration
 cat <<EOF >> root/etc/systemd/network/wlan0.network
 [Match]
