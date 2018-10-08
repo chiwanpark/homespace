@@ -1,0 +1,2 @@
+[init]
+192.168.1.10 ansible_user=alarm vpn_ip_add=10.1.1.101
