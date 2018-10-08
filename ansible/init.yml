@@ -1,17 +1,15 @@
 ---
 - hosts: init
-  tasks:
-    - name: Receive vpn shared key
-      pause:
-        prompt: "Enter vpn shared key"
-      register: shared_key
 
-    - name: Receive password of users
-      pause:
-        prompt: "Enter password for users"
-        echo: no
-      register: password
-    
+  vars_prompt:
+    - name: shared_key
+      prompt: "Enter vpn shared key"
+      private: no
+    - name: password
+      prompt: "Enter user/root password"
+      private: no
+
+  tasks:
     - name: Update packages
       pacman:
         update_cache: yes
@@ -33,7 +31,7 @@
     
     - name: Install base packages
       pacman:
-        name: ['htop', 'dstat', 'base-devel', 'sudo', 'git', 'unzip']
+        name: ['htop', 'dstat', 'base-devel', 'sudo', 'git', 'unzip', 'wget']
         state: latest
       become: yes
 
@@ -46,17 +44,17 @@
 
     - name: Set download URL for vpncloud.rs (armv61)
       set_fact:
-        vpncloud_url: https://drive.google.com/open?id=1QnvPWvQb3b9YC_EPCfYnlSMEHmdCixIQ
+        vpncloud_url: https://drive.google.com/file/d/1QnvPWvQb3b9YC_EPCfYnlSMEHmdCixIQ/view?usp=sharing
       when: info.ansible_facts.ansible_architecture == "armv6l"
 
     - name: Set download URL for vpncloud.rs (armv7l)
       set_fact:
-        vpncloud_url: https://drive.google.com/open?id=1OIM3kpaPKFLLPHJpi12ZzE0KxhYDrs84
+        vpncloud_url: https://drive.google.com/file/d/1OIM3kpaPKFLLPHJpi12ZzE0KxhYDrs84/view?usp=sharing
       when: info.ansible_facts.ansible_architecture == "armv7l"
 
     - name: Set download URL for vpncloud.rs (aarch64)
       set_fact:
-        vpncloud_url: https://drive.google.com/open?id=1nEwjkai1r6eRrUJ-mN5240BwD1aK9CZi
+        vpncloud_url: https://drive.google.com/file/d/1nEwjkai1r6eRrUJ-mN5240BwD1aK9CZi/view?usp=sharing
       when: info.ansible_facts.ansible_architecture == "aarch64"
 
     - name: Download gdown script
@@ -82,10 +80,24 @@
         dest: /usr/lib/systemd/system/vpncloud@.service
       become: yes
 
+    - name: Ensure /etc/vpncloud exist
+      file:
+        path: /etc/vpncloud
+        state: directory
+      become: yes
+
     - name: Copy configuration file
       template:
         src: templates/vpncloud.conf.j2
         dest: /etc/vpncloud/vpn.net
+      become: yes
+
+    - name: Enable and start vpncloud service
+      systemd:
+        name: "vpncloud@vpn"
+        daemon_reload: yes
+        enabled: yes
+        state: started
       become: yes
 
     - name: Add alarm to sudoers
@@ -100,13 +112,13 @@
     - name: Change password of default user
       user:
         name: alarm
-        password: "{{ password.user_input | password_hash('sha256', 'UqddPX3r4k') }}"
+        password: "{{ password | password_hash('sha256', 'UqddPX3r4k') }}"
         state: present
       become: yes
 
     - name: Change password of root user
       user:
         name: root
-        password: "{{ password.user_input | password_hash('sha256', 'UqddPX3r4k') }}"
+        password: "{{ password | password_hash('sha256', 'UqddPX3r4k') }}"
         state: present
       become: yes

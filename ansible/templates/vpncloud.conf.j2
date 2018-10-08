@@ -35,7 +35,7 @@ magic: "76706e01"
 
 # An optional shared key to encrypt the VPN data. If this option is not set,
 # the traffic will be sent unencrypted.
-shared_key: {{ shared_key.user_input }}
+shared_key: {{ shared_key }}
 
 # The encryption method to use ("aes256", or "chacha20"). Most current CPUs
 # have special support for AES256 so this should be faster. For older
@@ -69,7 +69,7 @@ subnets:
 # parameter to `sh -c`) when the device has been created to configure it.
 # The name of the allocated device will be available via the environment
 # variable `IFNAME`.
-ifup: "ifconfig $IFNAME {{ vpn_ip_addr }}/24 mtu 1400"
+ifup: "ifconfig $IFNAME {{ hostvars[ansible_hostname].vpn_ip_addr }}/24 mtu 1400"
 
 # A command to bring down the network interface. The command will be run (as
 # parameter to `sh -c`) to remove any configuration from the device.
