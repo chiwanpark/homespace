@@ -29,9 +29,9 @@
       become: yes
       template: src=templates/locale.conf.j2 dest=/etc/locale.conf
     
-    - name: Install base packages
+    - name: Install packages
       pacman:
-        name: ['htop', 'dstat', 'base-devel', 'sudo', 'git', 'unzip', 'wget']
+        name: ['htop', 'dstat', 'base-devel', 'sudo', 'git', 'unzip', 'wget', 'docker', 'vim']
         state: latest
       become: yes
 
