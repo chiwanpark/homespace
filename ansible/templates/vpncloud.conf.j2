@@ -9,7 +9,7 @@
 
 # The port number on which to listen for data.
 # Note: Every VPN needs a different port number.
-port: 3210
+port: {{ hostvars[ansible_hostname].vpn_port }}
 
 # Address of a peer to connect to. The address should be in the form
 # `addr:port`. If the node is not started, the connection will be retried
