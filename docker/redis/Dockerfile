@@ -11,7 +11,9 @@ RUN set -x \
 
 COPY redis.conf /etc/redis/
 COPY docker-entrypoint.sh /usr/local/bin
-ENTRYPOINT ["docker-entrypoint.sh"]
 
+VOLUME ["/data/redis"]
 EXPOSE 6379
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["redis-server", "/etc/redis/redis.conf"]

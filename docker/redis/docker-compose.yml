@@ -1,0 +1,26 @@
+version: "3"
+services:
+  server:
+    image: chiwanpark/redis:4.0.11
+    networks:
+      - backend
+    logging:
+      driver: journald
+    volumes:
+      - /opt/docker-data/redis:/data/redis
+    deploy:
+      mode: global
+      resources:
+        reservations:
+          cpus: "1"
+          memory: 384M
+        limits:
+          cpus: "1.25"
+          memory: 448M
+      placement:
+        constraints:
+          - node.labels.redis == on
+
+networks:
+  backend:
+    external: true
