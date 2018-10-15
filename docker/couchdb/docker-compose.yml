@@ -1,0 +1,54 @@
+version: "3.2"
+services:
+  server:
+    image: chiwanpark/couchdb:2.2.0-arm32v7
+    networks:
+      - backend
+    ports:
+      - target: 5984
+        published: 5984
+        protocol: tcp
+        mode: host
+      - target: 5986
+        published: 5986
+        protocol: tcp
+        mode: host
+      - target: 4369
+        published: 4369
+        protocol: tcp
+        mode: host
+      - target: 9100
+        published: 9100
+        protocol: tcp
+        mode: host
+    logging:
+      driver: journald
+    secrets:
+      - clusters
+      - couchdb-auth
+    volumes:
+      - /opt/docker-data/couchdb:/data/couchdb
+    environment:
+      NODENAME: "{{ .Node.Hostname }}"
+    deploy:
+      mode: global
+      resources:
+        reservations:
+          cpus: "1"
+          memory: 512M
+        limits:
+          cpus: "3"
+          memory: 768M
+      placement:
+        constraints:
+          - node.labels.couchdb == on
+
+networks:
+  backend:
+    external: true
+
+secrets:
+  clusters:
+    external: true
+  couchdb-auth:
+    external: true
