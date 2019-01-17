@@ -4,16 +4,12 @@
 dev=$1
 [ -z $dev ] && read dev
 
-# hostname
-hostname=$2
-[ -z $hostname ] && read hostname
-
 # wifi ssid
-wifi_ssid=$3
+wifi_ssid=$2
 [ -z $wifi_ssid ] && read wifi_ssid
 
 # wifi_password
-wifi_password=$4
+wifi_password=$3
 [ -z $wifi_password ] && read wifi_password
 
 # mount partition
@@ -22,9 +18,6 @@ source $DIR/mount.sh
 mount_dev
 trap umount_dev EXIT
 cd $tmp_dir
-
-# hostname configuration
-echo $hostname > root/etc/hostname
 
 # avoid wifi sleep mode (iptime n100mini)
 cat <<EOF >> root/etc/modprobe.d/8192cu.conf
