@@ -1,0 +1,10 @@
+[Unit]
+After=network.target
+
+[Service]
+ExecStart=/opt/wol-libvirt.sh
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
