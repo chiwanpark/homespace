@@ -2,14 +2,17 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 source ${SCRIPT_DIR}/.env
 
-if docker ps -a --format '{{.Names}}' | grep -q '^jupyter$'; then
+if podman ps -a --format '{{.Names}}' | grep -q '^jupyter$'; then
   echo "Jupyter container is running. Stopping and removing it..."
-  docker stop jupyter
-  docker rm jupyter
+  podman stop jupyter
+  podman rm jupyter
 fi
 
+podman pull quay.io/jupyter/minimal-notebook
+podman build -t chiwanpark/jupyter:latest .
+
 echo "Starting Jupyter container..."
-docker run -it -d \
+podman run -it -d \
   --name jupyter \
   -p 8888:8888 \
   -e NB_USER=chiwanpark \
@@ -19,7 +22,8 @@ docker run -it -d \
   -e JUPYTERHUB_PUBLIC_URL=${JUPYTERHUB_PUBLIC_URL} \
   -e JUPYTERHUB_SERVICE_URL=0.0.0.0:8888 \
   -w "/home/chiwanpark" \
-  -v /home/chiwanpark/workspace:/home/chiwanpark/workspace \
+  -v /mnt/nfs-workspace:/home/chiwanpark/workspace \
   --user root \
-  quay.io/jupyter/minimal-notebook \
-  start-notebook.py --PasswordIdentityProvider.hashed_password=${JUPYTER_PASSWORD}
+  --health-interval 60s \
+  chiwanpark/jupyter:latest \
+  start-notebook.py --PasswordIdentityProvider.hashed_password=${JUPYTERHUB_PASSWORD} --NotebookApp.base_url=${JUPYTERHUB_BASE_URL}
